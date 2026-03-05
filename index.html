@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rutz — Your Runs, Decoded by AI</title>
+    <meta name="description" content="Rutz connects to your Garmin, decodes your training data, and coaches you like someone who actually knows how you run.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0A0E17;
+            --bg-raised: #111827;
+            --bg-card: #1A2035;
+            --accent: #22D3EE;
+            --accent-dim: rgba(34, 211, 238, 0.15);
+            --accent-glow: rgba(34, 211, 238, 0.3);
+            --white: #F1F5F9;
+            --gray: #94A3B8;
+            --gray-dark: #475569;
+            --gradient-start: #22D3EE;
+            --gradient-end: #818CF8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(34, 211, 238, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(34, 211, 238, 0.4); }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background: rgba(10, 14, 23, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: padding 0.3s;
+        }
+
+        nav.scrolled { padding: 0.7rem 2rem; }
+
+        .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--white);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .logo span {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover { color: var(--white); }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.08) 0%, rgba(129, 140, 248, 0.04) 40%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--accent-dim);
+            border: 1px solid rgba(34, 211, 238, 0.2);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            animation: fadeUp 0.8s ease-out;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            border-radius: 50%;
+            animation: pulse-glow 2s infinite;
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            max-width: 720px;
+            margin-bottom: 1.5rem;
+            animation: fadeUp 0.8s ease-out 0.1s both;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            line-height: 1.7;
+            color: var(--gray);
+            max-width: 520px;
+            margin-bottom: 2.5rem;
+            animation: fadeUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.85rem 1.8rem;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--bg);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 100px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.3s;
+            animation: fadeUp 0.8s ease-out 0.3s both;
+        }
+
+        .hero-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34, 211, 238, 0.3);
+        }
+
+        .hero-cta svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--gray-dark);
+            font-size: 0.75rem;
+            animation: fadeIn 1s ease-out 1s both;
+        }
+
+        .scroll-hint .line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gray-dark), transparent);
+            animation: float 2s ease-in-out infinite;
+        }
+
+        /* ===== PROBLEM SECTION ===== */
+        .problem {
+            padding: 6rem 2rem;
+            position: relative;
+        }
+
+        .problem-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .problem-text h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            line-height: 1.2;
+            letter-spacing: -0.5px;
+            margin-bottom: 1.25rem;
+        }
+
+        .problem-text p {
+            font-size: 1rem;
+            line-height: 1.75;
+            color: var(--gray);
+        }
+
+        .data-wall {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.75rem;
+        }
+
+        .data-chip {
+            padding: 0.6rem 0.75rem;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 8px;
+            font-size: 0.7rem;
+            color: var(--gray);
+            text-align: center;
+            font-family: 'Inter', monospace;
+            transition: border-color 0.3s, color 0.3s;
+        }
+
+        .data-chip.highlighted {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-dim);
+        }
+
+        /* ===== SOLUTION / HOW IT WORKS ===== */
+        .solution {
+            padding: 6rem 2rem;
+        }
+
+        .solution-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 700;
+            line-height: 1.15;
+            letter-spacing: -0.5px;
+            margin-bottom: 3.5rem;
+            max-width: 600px;
+        }
+
+        .steps {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            counter-reset: step;
+        }
+
+        .step {
+            padding: 2rem 1.5rem;
+            background: var(--bg-raised);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            counter-increment: step;
+            position: relative;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .step:hover {
+            border-color: rgba(34, 211, 238, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .step-number {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 1rem;
+        }
+
+        .step-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-dim);
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            color: var(--accent);
+        }
+
+        .step h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .step p {
+            font-size: 0.88rem;
+            line-height: 1.65;
+            color: var(--gray);
+        }
+
+        /* ===== FEATURES ===== */
+        .features {
+            padding: 6rem 2rem;
+        }
+
+        .features-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .feature-card {
+            padding: 1.75rem;
+            background: var(--bg-raised);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(34, 211, 238, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .feature-card .icon {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--accent-dim);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            color: var(--accent);
+            font-size: 1.1rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .feature-card p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+            color: var(--gray);
+        }
+
+        /* ===== APP PREVIEW ===== */
+        .preview {
+            padding: 6rem 2rem;
+            text-align: center;
+        }
+
+        .preview-inner {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .phone-frame {
+            width: 280px;
+            height: 560px;
+            margin: 3rem auto 0;
+            background: var(--bg-card);
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 40px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .phone-frame::before {
+            content: '';
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 24px;
+            background: var(--bg);
+            border-radius: 20px;
+            z-index: 2;
+        }
+
+        .phone-placeholder {
+            color: var(--gray-dark);
+            font-size: 0.85rem;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .phone-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        /* ===== AI COACH SECTION ===== */
+        .ai-coach {
+            padding: 6rem 2rem;
+        }
+
+        .ai-coach-inner {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .chat-demo {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .chat-bubble {
+            max-width: 85%;
+            padding: 0.9rem 1.1rem;
+            border-radius: 16px;
+            font-size: 0.85rem;
+            line-height: 1.55;
+        }
+
+        .chat-user {
+            align-self: flex-end;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--bg);
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-ai {
+            align-self: flex-start;
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.06);
+            color: var(--white);
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-ai .coach-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            padding: 8rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(34, 211, 238, 0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .cta-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 1rem;
+        }
+
+        .cta-section p {
+            color: var(--gray);
+            font-size: 1.05rem;
+            margin-bottom: 2.5rem;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.9rem 2rem;
+            background: var(--white);
+            color: var(--bg);
+            font-weight: 600;
+            font-size: 0.95rem;
+            border-radius: 100px;
+            text-decoration: none;
+            transition: transform 0.2s, box-shadow 0.3s;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.1);
+        }
+
+        .cta-btn svg { width: 18px; height: 18px; }
+
+        /* ===== PRIVACY ===== */
+        .privacy {
+            padding: 6rem 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .privacy h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .privacy .updated {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-bottom: 3rem;
+        }
+
+        .privacy h2 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-top: 2.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--white);
+        }
+
+        .privacy p, .privacy li {
+            font-size: 0.92rem;
+            line-height: 1.75;
+            color: var(--gray);
+            margin-bottom: 0.75rem;
+        }
+
+        .privacy ul {
+            padding-left: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .privacy li { margin-bottom: 0.4rem; }
+
+        .privacy a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        .privacy a:hover { text-decoration: underline; }
+
+        /* ===== FOOTER ===== */
+        footer {
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--gray-dark);
+            font-size: 0.8rem;
+        }
+
+        footer a {
+            color: var(--gray);
+            text-decoration: none;
+            margin: 0 1rem;
+            transition: color 0.2s;
+        }
+
+        footer a:hover { color: var(--white); }
+
+        .footer-links {
+            margin-bottom: 1rem;
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            max-width: 900px;
+            margin: 0 auto;
+            border: none;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* ===== PAGE TOGGLE ===== */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            .problem-inner {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .steps {
+                grid-template-columns: 1fr;
+                gap: 1.25rem;
+            }
+
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-coach-inner {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+
+            .data-wall {
+                grid-template-columns: repeat(3, 1fr);
+                max-width: 320px;
+            }
+
+            nav { padding: 0.9rem 1.25rem; }
+
+            .hero, .problem, .solution, .features, .preview, .ai-coach, .cta-section, .privacy {
+                padding-left: 1.25rem;
+                padding-right: 1.25rem;
+            }
+
+            .nav-links { gap: 1.25rem; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="#" class="logo" onclick="showPage('home')">rutz<span>.</span></a>
+    <div class="nav-links">
+        <a href="#features" onclick="showPage('home')">Features</a>
+        <a href="#" onclick="showPage('privacy')">Privacy</a>
+    </div>
+</nav>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-badge">Coming Soon on iOS</div>
+        <h1>Your watch collects the data.<br><span class="gradient-text">Rutz makes sense of it.</span></h1>
+        <p>Your Garmin tracks 60+ metrics every run. Rutz turns that noise into a personal AI coach that knows your body, your patterns, and exactly what you need next.</p>
+        <a href="#how" class="hero-cta">
+            See how it works
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 13.5 12 21m0 0-7.5-7.5M12 21V3"/></svg>
+        </a>
+        <div class="scroll-hint">
+            <div class="line"></div>
+        </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section class="problem">
+        <div class="problem-inner">
+            <div class="problem-text reveal">
+                <h2>60+ metrics. Zero clarity.</h2>
+                <p>Every run generates a wall of data — VO2 max, training effect, ground contact time, vertical oscillation, HRV, lactate threshold... Most runners see numbers. Few know what to do with them.</p>
+            </div>
+            <div class="data-wall reveal reveal-delay-2">
+                <div class="data-chip">VO2 Max</div>
+                <div class="data-chip">HRV</div>
+                <div class="data-chip">Cadence</div>
+                <div class="data-chip">GCT</div>
+                <div class="data-chip">Pace</div>
+                <div class="data-chip">Vert. Osc.</div>
+                <div class="data-chip">Training Effect</div>
+                <div class="data-chip">Stride</div>
+                <div class="data-chip highlighted">What now?</div>
+                <div class="data-chip">Lactate</div>
+                <div class="data-chip">HR Zones</div>
+                <div class="data-chip">Recovery</div>
+                <div class="data-chip">Load</div>
+                <div class="data-chip">TSB</div>
+                <div class="data-chip highlighted">Am I ready?</div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- HOW IT WORKS -->
+    <section class="solution" id="how">
+        <div class="solution-inner">
+            <p class="section-label reveal">How it works</p>
+            <h2 class="section-title reveal reveal-delay-1">From raw data to<br>real coaching in 3 steps</h2>
+            <div class="steps">
+                <div class="step reveal reveal-delay-1">
+                    <div class="step-number">01</div>
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/></svg>
+                    </div>
+                    <h3>Sync your Garmin</h3>
+                    <p>Connect once. Every run, heart rate zone, recovery metric, and daily readiness score flows in automatically.</p>
+                </div>
+                <div class="step reveal reveal-delay-2">
+                    <div class="step-number">02</div>
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 0 0-2.455 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z"/></svg>
+                    </div>
+                    <h3>AI decodes it</h3>
+                    <p>Rutz analyzes your fitness trends, fatigue patterns, and training load — building a profile that gets smarter every run.</p>
+                </div>
+                <div class="step reveal reveal-delay-3">
+                    <div class="step-number">03</div>
+                    <div class="step-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"/></svg>
+                    </div>
+                    <h3>Coach talks to you</h3>
+                    <p>Ask anything. Get specific, personalized advice based on your actual data — not generic tips from the internet.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- FEATURES -->
+    <section class="features" id="features">
+        <div class="features-inner">
+            <p class="section-label reveal">Features</p>
+            <h2 class="section-title reveal reveal-delay-1">Everything a recreational runner<br>actually needs</h2>
+            <div class="feature-grid">
+                <div class="feature-card reveal reveal-delay-1">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z"/></svg>
+                    </div>
+                    <h3>Run Scoring</h3>
+                    <p>Every run gets a composite score — RPI, BTS, and DRS metrics that track your fitness, form, and readiness over time.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-2">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"/></svg>
+                    </div>
+                    <h3>AI Coach Chat</h3>
+                    <p>A conversational coach that speaks your language. Ask about your last run, next race, or whether you should rest today.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-3">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"/></svg>
+                    </div>
+                    <h3>Smart Training Plan</h3>
+                    <p>See your weekly plan with progress tracking. Know exactly what's ahead and how you're doing against it.</p>
+                </div>
+                <div class="feature-card reveal reveal-delay-4">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"/></svg>
+                    </div>
+                    <h3>Recovery Insights</h3>
+                    <p>Training load, acute/chronic ratio, and daily readiness — so you push hard on the right days and rest when it matters.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- APP PREVIEW -->
+    <section class="preview">
+        <div class="preview-inner">
+            <p class="section-label reveal">Preview</p>
+            <h2 class="section-title reveal reveal-delay-1" style="margin-left: auto; margin-right: auto; text-align: center;">Built for your pocket.<br>Powered by your data.</h2>
+            <div class="phone-frame reveal reveal-delay-2">
+                <div class="phone-placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/></svg>
+                    <p>App screenshots coming soon</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- AI COACH -->
+    <section class="ai-coach">
+        <div class="ai-coach-inner">
+            <div class="reveal">
+                <p class="section-label">Your AI Coach</p>
+                <h2 class="section-title">Knows you better than your<br>training buddy</h2>
+                <p style="color: var(--gray); line-height: 1.7; font-size: 0.95rem;">Rutz doesn't give generic advice. It analyzes your personal data — every run, every trend, every recovery pattern — to give you coaching that's actually about <em>you</em>.</p>
+            </div>
+            <div class="chat-demo reveal reveal-delay-2">
+                <div class="chat-bubble chat-user">How was my run today?</div>
+                <div class="chat-bubble chat-ai">
+                    <div class="coach-label">Rutz Coach</div>
+                    Great tempo run! Your pace was 5:12/km, 8 seconds faster than last week's tempo. Heart rate stayed in zone 3 the whole time — your aerobic base is getting stronger. Recovery looks good, you're clear for tomorrow's easy run.
+                </div>
+                <div class="chat-bubble chat-user">Should I do the long run Saturday or rest?</div>
+                <div class="chat-bubble chat-ai">
+                    <div class="coach-label">Rutz Coach</div>
+                    Your training load is balanced and TSB is positive. Go for the long run — but keep it at 5:45-6:00/km pace. Your body is ready.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <hr class="divider">
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <h2 class="reveal">Ready to run smarter?</h2>
+        <p class="reveal reveal-delay-1">Rutz is coming to iOS soon. Your Garmin data deserves better than charts you never read.</p>
+        <div class="reveal reveal-delay-2">
+            <span class="hero-cta" style="cursor: default; opacity: 0.9;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                Coming Soon
+            </span>
+        </div>
+    </section>
+</div>
+
+<!-- PRIVACY POLICY PAGE -->
+<div id="privacy" class="page">
+    <section class="privacy">
+        <h1>Privacy Policy</h1>
+        <p class="updated">Last updated: March 5, 2026</p>
+
+        <p>Rutz ("we", "our", "us") is an AI-powered running coaching application for iOS, developed by Itay Naim, based in Israel. This Privacy Policy explains how we collect, use, store, and protect your information when you use the Rutz app.</p>
+
+        <h2>1. Information We Collect</h2>
+        <p>We collect the following types of data:</p>
+        <ul>
+            <li><strong>Account Information:</strong> Name, email address, and basic profile details you provide when creating an account.</li>
+            <li><strong>Garmin Activity Data:</strong> When you connect your Garmin account, we retrieve workout and activity data including runs, heart rate, cadence, ground contact time, vertical oscillation, stride length, training effect, VO2 max estimates, and other metrics available through the Garmin Connect API.</li>
+            <li><strong>App Usage Data:</strong> How you interact with the app, including features used, training plans viewed, and coaching feedback received.</li>
+            <li><strong>Device Information:</strong> Device type, operating system version, and app version for troubleshooting and compatibility.</li>
+        </ul>
+
+        <h2>2. How We Collect Your Data</h2>
+        <p>We collect data through:</p>
+        <ul>
+            <li><strong>Direct input:</strong> Information you provide when creating your account or setting up your profile.</li>
+            <li><strong>Garmin Connect API:</strong> Activity and health data retrieved with your explicit consent when you connect your Garmin account. You must authorize this connection, and you can revoke it at any time.</li>
+            <li><strong>Automatic collection:</strong> Basic app usage and device data collected during normal use of the app.</li>
+        </ul>
+
+        <h2>3. How We Use Your Data</h2>
+        <p>Your data is used for the following purposes:</p>
+        <ul>
+            <li>Generating personalized AI-powered training plans and coaching recommendations.</li>
+            <li>Analyzing your running performance, fitness trends, and recovery patterns.</li>
+            <li>Improving the accuracy and quality of coaching insights over time.</li>
+            <li>Providing run scoring, readiness assessments, and race preparation guidance.</li>
+            <li>App maintenance, troubleshooting, and improving the user experience.</li>
+        </ul>
+
+        <h2>4. Third-Party Services</h2>
+        <p>We use the following third-party services to operate Rutz:</p>
+        <ul>
+            <li><strong>Garmin Connect API:</strong> To retrieve your activity and training data with your permission.</li>
+            <li><strong>AI Processing (OpenAI / Anthropic):</strong> Your activity data may be sent to AI language model APIs for the sole purpose of generating personalized coaching insights. These services process data in real time and do not permanently store your personal data beyond what is needed to complete the request.</li>
+            <li><strong>Cloud Hosting (AWS / Supabase):</strong> For secure data storage and app infrastructure.</li>
+            <li><strong>Apple App Store:</strong> For app distribution.</li>
+        </ul>
+        <p>We do not sell, rent, or trade your personal data to any third party.</p>
+
+        <h2>5. Data Retention and Deletion</h2>
+        <p>We retain your data for as long as your account is active and as needed to provide you with our services. You may request deletion of all your data at any time by contacting us at <a href="mailto:itaynaim@gmail.com">itaynaim@gmail.com</a>. Upon receiving a deletion request, we will remove your data from our systems within 30 days, except where retention is required by law.</p>
+
+        <h2>6. Data Security</h2>
+        <p>We implement appropriate technical and organizational measures to protect your data, including encryption in transit and at rest, secure authentication, and access controls. However, no method of electronic transmission or storage is 100% secure, and we cannot guarantee absolute security.</p>
+
+        <h2>7. Your Rights</h2>
+        <p>You have the right to:</p>
+        <ul>
+            <li><strong>Access</strong> the personal data we hold about you.</li>
+            <li><strong>Correct</strong> inaccurate or incomplete data.</li>
+            <li><strong>Delete</strong> your data and account.</li>
+            <li><strong>Withdraw consent</strong> for data collection at any time, including disconnecting your Garmin account.</li>
+            <li><strong>Export</strong> your data in a portable format upon request.</li>
+        </ul>
+        <p>To exercise any of these rights, contact us at <a href="mailto:itaynaim@gmail.com">itaynaim@gmail.com</a>.</p>
+
+        <h2>8. Children's Privacy</h2>
+        <p>Rutz is not intended for use by children under the age of 16. We do not knowingly collect personal data from children. If you believe a child has provided us with personal data, please contact us and we will promptly delete it.</p>
+
+        <h2>9. Legal Compliance</h2>
+        <p>This policy is designed to comply with:</p>
+        <ul>
+            <li><strong>GDPR</strong> (General Data Protection Regulation) for users in the European Union.</li>
+            <li><strong>Israeli Privacy Protection Law, 5741-1981</strong> and related regulations.</li>
+            <li><strong>Apple App Store Guidelines</strong> regarding data collection and privacy.</li>
+            <li><strong>Garmin Connect Developer Program</strong> requirements for handling user activity data.</li>
+        </ul>
+
+        <h2>10. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time. When we do, we will update the "Last updated" date at the top of this page and notify you through the app if the changes are significant. Continued use of Rutz after changes constitutes acceptance of the updated policy.</p>
+
+        <h2>11. Contact</h2>
+        <p>If you have any questions about this Privacy Policy or how we handle your data, please contact us:</p>
+        <p>
+            Itay Naim<br>
+            Rutz<br>
+            Email: <a href="mailto:itaynaim@gmail.com">itaynaim@gmail.com</a>
+        </p>
+    </section>
+</div>
+
+<footer>
+    <div class="footer-links">
+        <a href="#" onclick="showPage('home')">Home</a>
+        <a href="#" onclick="showPage('privacy')">Privacy Policy</a>
+        <a href="mailto:itaynaim@gmail.com">Contact</a>
+    </div>
+    &copy; 2026 Rutz. All rights reserved.
+</footer>
+
+<script>
+    // Page switching
+    function showPage(page) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.getElementById(page).classList.add('active');
+        window.scrollTo(0, 0);
+        // Re-trigger reveal animations on page switch
+        setTimeout(() => observeReveals(), 100);
+    }
+
+    if (window.location.hash === '#privacy') showPage('privacy');
+
+    // Nav shrink on scroll
+    window.addEventListener('scroll', () => {
+        document.querySelector('nav').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Scroll reveal
+    function observeReveals() {
+        const reveals = document.querySelectorAll('.reveal:not(.visible)');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+        reveals.forEach(el => observer.observe(el));
+    }
+
+    observeReveals();
+
+    // Animate data chips sequentially
+    function animateChips() {
+        const chips = document.querySelectorAll('.data-chip');
+        chips.forEach((chip, i) => {
+            chip.style.opacity = '0';
+            chip.style.transform = 'scale(0.8)';
+            chip.style.transition = `opacity 0.4s ease ${i * 0.06}s, transform 0.4s ease ${i * 0.06}s`;
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const chips = entry.target.querySelectorAll('.data-chip');
+                    chips.forEach(chip => {
+                        chip.style.opacity = '1';
+                        chip.style.transform = 'scale(1)';
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const wall = document.querySelector('.data-wall');
+        if (wall) observer.observe(wall);
+    }
+
+    animateChips();
+
+    // Chat demo typing animation
+    function animateChat() {
+        const bubbles = document.querySelectorAll('.chat-bubble');
+        bubbles.forEach((bubble, i) => {
+            bubble.style.opacity = '0';
+            bubble.style.transform = 'translateY(10px)';
+            bubble.style.transition = `opacity 0.5s ease ${i * 0.4}s, transform 0.5s ease ${i * 0.4}s`;
+        });
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bubbles = entry.target.querySelectorAll('.chat-bubble');
+                    bubbles.forEach(bubble => {
+                        bubble.style.opacity = '1';
+                        bubble.style.transform = 'translateY(0)';
+                    });
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.3 });
+
+        const demo = document.querySelector('.chat-demo');
+        if (demo) observer.observe(demo);
+    }
+
+    animateChat();
+</script>
+
+</body>
+</html>
