@@ -1,7 +1,7 @@
-2:I[7219,["202","static/chunks/202-2e741534192eaf33.js","385","static/chunks/app/privacy/page-e5b90bbacf127693.js"],"default"]
+2:I[7219,["202","static/chunks/202-2e741534192eaf33.js","385","static/chunks/app/privacy/page-075df445df28e108.js"],"default"]
 4:I[4707,[],""]
 5:I[6423,[],""]
-3:T3ae2,# Rutz — Privacy Policy
+3:T338b,# Rutz — Privacy Policy
 
 **Last Updated:** June 12, 2026
 **Effective Date:** June 12, 2026
@@ -36,18 +36,7 @@ When you grant HealthKit permission, we read the following data types from Apple
 
 Our HealthKit access is read-only — we do not write data to Apple Health.
 
-### 1.3 Garmin Connect Data (Beta)
-
-If you enable our **Beta** Garmin connection, we retrieve your activity and health data from the Garmin Connect API with your explicit permission, including:
-
-- **Run metrics:** distance, duration, pace, elevation, calories, heart rate, cadence, and running dynamics (ground contact time, vertical oscillation, stride length, power)
-- **Training metrics:** VO2 max estimates and training load
-- **GPS routes:** activity coordinates and elevation profiles
-- **Daily health metrics:** resting heart rate, heart rate variability (HRV), and sleep
-
-This connection is read-only and optional. You can disconnect it at any time in the App, which stops all future Garmin data retrieval.
-
-### 1.4 User-Provided Information
+### 1.3 User-Provided Information
 
 You may voluntarily provide additional information through the App, including:
 
@@ -55,7 +44,7 @@ You may voluntarily provide additional information through the App, including:
 - **Daily check-ins:** sleep quality, energy level, muscle soreness, and free-form notes
 - **AI coach conversations:** questions you ask the AI coach and the responses generated
 
-### 1.5 Automatically Collected Information
+### 1.4 Automatically Collected Information
 
 When you use the App, we automatically collect minimal technical data:
 
@@ -75,15 +64,11 @@ We access your workout and health data through Apple HealthKit on your device. Y
 
 You can revoke HealthKit access at any time in iOS Settings → Privacy & Security → Health, which will stop all future data retrieval.
 
-### 2.2 Garmin Connect API (Beta)
-
-If you enable the Beta Garmin connection, we access your data through the Garmin Connect API in read-only mode after you explicitly authorize it. You can disconnect your Garmin account at any time in the App's settings, which stops all future retrieval.
-
-### 2.3 Direct Input
+### 2.2 Direct Input
 
 Profile information, injury records, daily check-ins, and AI coach conversations are collected directly from your interactions with the App.
 
-### 2.4 Apple Sign In
+### 2.3 Apple Sign In
 
 If you use Apple Sign In, Apple provides us with your name and email address (or Apple's private relay email, if you choose to hide your email). We do not receive your Apple password or any other Apple account data.
 
@@ -124,13 +109,7 @@ Our backend application runs on Railway (EU West region), and your data is store
 
 To add weather context to a run (temperature and conditions), we send the approximate coordinates of an activity to the OpenWeatherMap API. No account details, name, email, or other identifying information is sent. OpenWeatherMap's practices are governed by [OpenWeatherMap's Privacy Policy](https://openweather.co.uk/privacy-policy).
 
-### 4.4 Garmin Connect — Beta (Garmin International, Inc.)
-
-If you enable the Beta Garmin connection, we use the Garmin Connect API to retrieve your activity and health data. We access it in read-only mode and never write to your Garmin account. Garmin's processing of your data is governed by [Garmin's Privacy Policy](https://www.garmin.com/en-US/privacy/connect/).
-
-To retrieve your Garmin data reliably, our requests to Garmin are routed through encrypted proxy servers hosted by **Hetzner** in Nuremberg, Germany and Helsinki, Finland (both in the EU). These proxies relay traffic only — they do not store your data. Hetzner's practices are governed by [Hetzner's Privacy Policy](https://www.hetzner.com/legal/privacy-policy/).
-
-### 4.5 Apple (App Distribution)
+### 4.4 Apple (App Distribution)
 
 The App is distributed through the Apple App Store. Apple may collect data related to your download and use of the App in accordance with [Apple's Privacy Policy](https://www.apple.com/legal/privacy/).
 
@@ -175,7 +154,6 @@ You may request deletion of all your data at any time. Upon deletion, we will pe
 - Runner profile and fitness scores
 - User profile information (name, age, weight, etc.)
 - Injury records and daily check-ins
-- Garmin connection tokens (if you used the Beta Garmin connection)
 
 To request deletion, use the "Delete Account" option in the App's Settings, or contact us at **itaynaim@runcoach.net**. We will process deletion requests within 30 days.
 
@@ -194,7 +172,7 @@ Depending on your location, you may have the following rights regarding your per
 - **Access:** Request a copy of the data we hold about you.
 - **Correction:** Request correction of inaccurate data.
 - **Deletion:** Request deletion of all your data (see Section 6).
-- **Withdraw consent:** Revoke HealthKit access in iOS Settings, disconnect the Beta Garmin connection in the App, or delete your Rutz account at any time.
+- **Withdraw consent:** Revoke HealthKit access in iOS Settings, or delete your Rutz account at any time.
 - **Data portability:** Request your data in a machine-readable format.
 
 ### 7.2 For EU/EEA Users (GDPR)
@@ -219,7 +197,7 @@ To exercise any of these rights, contact us at **itaynaim@runcoach.net**. We wil
 
 **We do not sell, rent, or trade your personal data to any third party.**
 
-We share data only with the third-party services described in Section 4 (Google, Supabase, Railway, OpenWeatherMap, Garmin, Hetzner, Apple), and only to the extent necessary to provide the App's core functionality. We will never share your data with advertisers or data brokers.
+We share data only with the third-party services described in Section 4 (Google, Supabase, Railway, OpenWeatherMap, Apple), and only to the extent necessary to provide the App's core functionality. We will never share your data with advertisers or data brokers.
 
 We may disclose your data if required by law, court order, or governmental request, or if necessary to protect our rights, property, or safety.
 
@@ -251,6 +229,6 @@ Location: Israel
 ---
 
 *This Privacy Policy is written in English. In the event of any conflict between translated versions and the English version, the English version shall prevail.*
-0:["jhsHSiEab77bXgWbyg0qW",[[["",{"children":["privacy",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],["",{"children":["privacy",{"children":["__PAGE__",{},[["$L1",["$","div",null,{"className":"min-h-screen bg-black","children":["$","div",null,{"className":"max-w-3xl mx-auto px-6 py-16","children":[["$","a",null,{"href":"/","className":"inline-flex items-center gap-2 text-sm text-white/50 hover:text-lava transition-colors duration-200 mb-8","children":[["$","svg",null,{"viewBox":"0 0 24 24","className":"w-4 h-4 fill-none stroke-current stroke-2","children":["$","path",null,{"d":"M19 12H5M12 19l-7-7 7-7","strokeLinecap":"round","strokeLinejoin":"round"}]}],"Back to home"]}],["$","$L2",null,{"content":"$3"}]]}]}],null],null],null]},[null,["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children","privacy","children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","notFoundStyles":"$undefined"}]],null]},[[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/fefab9f8922f5785.css","precedence":"next","crossOrigin":"$undefined"}]],["$","html",null,{"lang":"en","className":"dark __variable_48b81b __variable_e896d9","children":[["$","head",null,{"children":[["$","meta",null,{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta",null,{"name":"theme-color","content":"#0B0B0E"}]]}],["$","body",null,{"className":"antialiased bg-base text-ink min-h-dvh overflow-x-hidden font-sans selection:bg-lava/30 selection:text-white","children":[["$","div",null,{"aria-hidden":true,"className":"pointer-events-none fixed inset-0 z-[1] opacity-[0.04] mix-blend-overlay","style":{"backgroundImage":"url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")"}}],["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":"404"}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],"notFoundStyles":[]}]]}]]}]],null],null],["$L6",null]]]]
-6:[["$","meta","0",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","1",{"charSet":"utf-8"}],["$","title","2",{"children":"Privacy Policy - Rutz"}],["$","meta","3",{"name":"description","content":"Rutz privacy policy - how we handle your data"}],["$","meta","4",{"name":"keywords","content":"running,AI coach,training,running analysis,Apple Watch,Garmin,waitlist"}],["$","meta","5",{"property":"og:title","content":"Rutz — AI Running Coach"}],["$","meta","6",{"property":"og:description","content":"Your running is a science. Start treating it like one. Join the waitlist for the AI coach that actually gets you."}],["$","meta","7",{"property":"og:type","content":"website"}],["$","meta","8",{"name":"twitter:card","content":"summary"}],["$","meta","9",{"name":"twitter:title","content":"Rutz — AI Running Coach"}],["$","meta","10",{"name":"twitter:description","content":"Your running is a science. Start treating it like one. Join the waitlist for the AI coach that actually gets you."}],["$","link","11",{"rel":"icon","href":"/favicon.ico","type":"image/x-icon","sizes":"16x16"}],["$","meta","12",{"name":"next-size-adjust"}]]
+0:["749u1PXT5k98FUEIv1xID",[[["",{"children":["privacy",{"children":["__PAGE__",{}]}]},"$undefined","$undefined",true],["",{"children":["privacy",{"children":["__PAGE__",{},[["$L1",["$","div",null,{"className":"min-h-screen bg-black","children":["$","div",null,{"className":"max-w-3xl mx-auto px-6 py-16","children":[["$","a",null,{"href":"/","className":"inline-flex items-center gap-2 text-sm text-white/50 hover:text-lava transition-colors duration-200 mb-8","children":[["$","svg",null,{"viewBox":"0 0 24 24","className":"w-4 h-4 fill-none stroke-current stroke-2","children":["$","path",null,{"d":"M19 12H5M12 19l-7-7 7-7","strokeLinecap":"round","strokeLinejoin":"round"}]}],"Back to home"]}],["$","$L2",null,{"content":"$3"}]]}]}],null],null],null]},[null,["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children","privacy","children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","notFoundStyles":"$undefined"}]],null]},[[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/fefab9f8922f5785.css","precedence":"next","crossOrigin":"$undefined"}]],["$","html",null,{"lang":"en","className":"dark __variable_48b81b __variable_e896d9","children":[["$","head",null,{"children":[["$","meta",null,{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta",null,{"name":"theme-color","content":"#0B0B0E"}]]}],["$","body",null,{"className":"antialiased bg-base text-ink min-h-dvh overflow-x-hidden font-sans selection:bg-lava/30 selection:text-white","children":[["$","div",null,{"aria-hidden":true,"className":"pointer-events-none fixed inset-0 z-[1] opacity-[0.04] mix-blend-overlay","style":{"backgroundImage":"url(\"data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>\")"}}],["$","$L4",null,{"parallelRouterKey":"children","segmentPath":["children"],"error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":"404"}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],"notFoundStyles":[]}]]}]]}]],null],null],["$L6",null]]]]
+6:[["$","meta","0",{"name":"viewport","content":"width=device-width, initial-scale=1"}],["$","meta","1",{"charSet":"utf-8"}],["$","title","2",{"children":"Privacy Policy - Rutz"}],["$","meta","3",{"name":"description","content":"Rutz privacy policy - how we handle your data"}],["$","meta","4",{"name":"keywords","content":"running,AI coach,training,running analysis,Apple Watch,waitlist"}],["$","meta","5",{"property":"og:title","content":"Rutz — AI Running Coach"}],["$","meta","6",{"property":"og:description","content":"Your running is a science. Start treating it like one. Join the waitlist for the AI coach that actually gets you."}],["$","meta","7",{"property":"og:type","content":"website"}],["$","meta","8",{"name":"twitter:card","content":"summary"}],["$","meta","9",{"name":"twitter:title","content":"Rutz — AI Running Coach"}],["$","meta","10",{"name":"twitter:description","content":"Your running is a science. Start treating it like one. Join the waitlist for the AI coach that actually gets you."}],["$","link","11",{"rel":"icon","href":"/favicon.ico","type":"image/x-icon","sizes":"16x16"}],["$","meta","12",{"name":"next-size-adjust"}]]
 1:null
